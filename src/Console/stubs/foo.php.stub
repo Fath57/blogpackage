@@ -1,0 +1,13 @@
+<?php
+
+namespace DummyNamespace;
+
+use Arafath57\BlogPackage\Foo;
+
+class DummyClass implements Foo
+{
+    public function myFoo()
+    {
+        // foo
+    }
+}
