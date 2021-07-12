@@ -1,0 +1,39 @@
+{
+  "name": "arafath57/blogpackage",
+  "description": "A demo package",
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "ATTA YAYA Arafath",
+      "email": "aattayaya@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Arafath57\\BlogPackage\\": "src",
+      "Arafath57\\BlogPackage\\Tests\\": "tests",
+      "Arafath57\\BlogPackage\\Database\\Factories\\": "database/factories"
+
+
+    }
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit",
+    "test-f": "vendor/bin/phpunit --filter"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^6.0",
+    "phpunit/phpunit": "^9.5"
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Arafath57\\BlogPackage\\BlogPackageServiceProvider"
+      ],
+      "aliases": {
+        "CalculatorFacade": "Calculator"
+      }
+    }
+  }
+}
