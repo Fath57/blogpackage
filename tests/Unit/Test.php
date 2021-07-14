@@ -9,8 +9,7 @@ class Test extends TestCase
 {
 
 
-    /** @test */
-/*    function the_install_command_copies_the_configuration()
+    function the_install_command_copies_the_configuration()
     {
         // make sure we're starting from a clean state
         if (File::exists(config_path('blogpackage.php'))) {
@@ -22,12 +21,11 @@ class Test extends TestCase
         Artisan::call('blogpackage:install');
 
         $this->assertTrue(File::exists(config_path('blogpackage.php')));
-    }*/
-
-    /** @test */
+    }
 
 
-/*    function when_a_config_file_is_present_users_can_choose_to_not_overwrite_it(){
+
+    function when_a_config_file_is_present_users_can_choose_to_not_overwrite_it(){
 
         // Given we have already have an existing config file
         File::put(config_path('blogpackage.php'),"Test content");
@@ -42,11 +40,10 @@ class Test extends TestCase
         $this->assertEquals(file_get_contents(config_path("blogpackage.php")),"Test content");
         //clean up
         unlink(config_path('blogpackage.php'));
-    }*/
+    }
 
-    /** @test */
 
-/*    function when_a_config_file_is_present_users_can_choose_to_overwrite_it(){
+    function when_a_config_file_is_present_users_can_choose_to_overwrite_it(){
         //Given we have already have config file
         File::put(config_path('blogpackage.php'),"Test content");
         $this->assertTrue(File::exists(config_path("blogpackage.php")));
@@ -67,5 +64,5 @@ class Test extends TestCase
 
         //clean up
         unlink(config_path("blogpackage.php"));
-    }*/
+    }
 }

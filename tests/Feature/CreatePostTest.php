@@ -2,35 +2,49 @@
 
 namespace Arafath57\BlogPackage\Tests\Feature;
 
+use Arafath57\BlogPackage\Models\FathPostCategory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Arafath57\BlogPackage\Models\Post;
+use Arafath57\BlogPackage\Models\FathPost;
 use Arafath57\BlogPackage\Tests\TestCase;
 use Arafath57\BlogPackage\Tests\User;
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Mockery\Mock;
 
 class CreatePostTest extends TestCase
 {
-    use RefreshDatabase;
+    use RefreshDatabase,WithFaker;
+
 
     /** @test */
     function authenticated_users_can_create_a_post()
     {
         // To make sure we don't start with a Post
-        $this->assertCount(0, Post::all());
+        $this->assertCount(0, FathPost::all());
 
         $author = User::factory()->create();
+        $category = FathPostCategory::factory()->create();
+        $data = [
+            'slug'     => $this->faker->slug(12).time(),
+            'title'     => $this->faker->words(3, true),
+            'key_words'      => $this->faker->text,
+            'body'      => $this->faker->paragraph,
+            'summary'      => $this->faker->paragraph,
+            'status'      => "draft",
+            'author_id' => $author->id,
+            'fath_post_category_id' => $category->id,
+            'author_type' => get_class($author),
+            ];
+        $response = $this->actingAs($author)->post(route('fath.posts.store'), $data);
 
-        $response = $this->actingAs($author)->post(route('posts.store'), [
-            'title' => 'My first fake title',
-            'body'  => 'My first fake body',
-        ]);
+        $this->assertCount(1, FathPost::all());
 
-        $this->assertCount(1, Post::all());
-
-        tap(Post::first(), function ($post) use ($response, $author) {
-            $this->assertEquals('My first fake title', $post->title);
-            $this->assertEquals('My first fake body', $post->body);
+        tap(FathPost::first(), function ($post) use ($response, $author) {
+            $this->assertNotEmpty( $post->title);
+            $this->assertNotEmpty( $post->body);
             $this->assertTrue($post->author->is($author));
-            $response->assertRedirect(route('posts.show', $post));
+            $response->assertRedirect(route('fath.posts.show', $post));
         });
     }
     /** @test */
@@ -38,15 +52,16 @@ class CreatePostTest extends TestCase
     {
         $author = User::factory()->create();
 
-        $this->actingAs($author)->post(route('posts.store'), [
+        $this->actingAs($author)->post(route('fath.posts.store'), [
             'title' => '',
             'body'  => 'Some valid body',
         ])->assertSessionHasErrors('title');
 
-        $this->actingAs($author)->post(route('posts.store'), [
-            'title' => 'Some valid title',
-            'body'  => '',
-        ])->assertSessionHasErrors('body');
+        $this->actingAs($author)->post(route('fath.posts.store'), FathPost::factory()->create([
+            "slug"=>"lkeke",
+            "title"=>""
+        ])->toArray())
+            ->assertSessionHasErrors('title');
     }
     /** @test */
     function guests_can_not_create_posts()
@@ -54,28 +69,25 @@ class CreatePostTest extends TestCase
         // We're starting from an unauthenticated state
         $this->assertFalse(auth()->check());
 
-        $this->post(route('posts.store'), [
-            'title' => 'A valid title',
-            'body'  => 'A valid body',
-        ])->assertForbidden();
+        $this->post(route('fath.posts.store'), FathPost::factory()->create()->toArray())->assertForbidden();
     }
     /** @test */
     function all_posts_are_shown_via_the_index_route()
     {
         // Given we have a couple of Posts
-        Post::factory()->create([
+        FathPost::factory()->create([
             'title' => 'Post number 1'
         ]);
-        Post::factory()->create([
+        FathPost::factory()->create([
             'title' => 'Post number 2'
         ]);
-        Post::factory()->create([
+        FathPost::factory()->create([
             'title' => 'Post number 3'
         ]);
 
         // We expect them to all show up
         // with their title on the index route
-        $this->get(route('posts.index'))
+        $this->get(route('fath.posts.index'))
             ->assertSee('Post number 1')
             ->assertSee('Post number 2')
             ->assertSee('Post number 3')
@@ -85,13 +97,9 @@ class CreatePostTest extends TestCase
     /** @test */
     function a_single_post_is_shown_via_the_show_route()
     {
-        $post = Post::factory()->create([
-            'title' => 'The single post title',
-            'body'  => 'The single post body',
-        ]);
-
-        $this->get(route('posts.show', $post))
-            ->assertSee('The single post title')
-            ->assertSee('The single post body');
+        $post = FathPost::factory()->create();
+        $this->get(route('fath.posts.show', $post->id))
+            ->assertSee($post->title)
+            ->assertSee($post->body);
     }
 }

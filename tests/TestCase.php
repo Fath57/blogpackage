@@ -23,11 +23,17 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function getEnvironmentSetUp($app)
     {
-        include_once __DIR__ . '/../database/migrations/create_posts_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_fath_post_categories_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_fath_posts_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_fath_post_comments_table.php.stub';
+        include_once __DIR__ . '/../database/migrations/create_fath_post_images_table.php.stub';
         include_once __DIR__ . '/../database/migrations/create_users_table.php.stub';
 
         // run the up() method (perform the migration)
-        (new \CreatePostsTable)->up();
+        (new \CreateFathPostCategoriesTable())->up();
+        (new \CreateFathPostsTable())->up();
+        (new \CreateFathPostCommentsTable())->up();
+        (new \CreateFathPostImagesTable())->up();
         (new \CreateUsersTable)->up();
     }
 }

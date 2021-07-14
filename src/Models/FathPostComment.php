@@ -1,13 +1,16 @@
 <?php
 
+
 namespace Arafath57\BlogPackage\Models;
 
-use Arafath57\BlogPackage\Database\Factories\PostFactory;
+
+use Arafath57\BlogPackage\Database\Factories\FathPostCommentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Post extends Model
+class FathPostComment extends Model
 {
     use HasFactory;
 
@@ -18,8 +21,12 @@ class Post extends Model
     {
         return $this->morphTo();
     }
-    protected static function newFactory(): PostFactory
+    protected static function newFactory(): FathPostCommentFactory
     {
-        return PostFactory::new();
+        return FathPostCommentFactory::new();
+    }
+    function post(): BelongsTo
+    {
+        return $this->belongsTo(FathPost::class,"fath_post_id");
     }
 }
